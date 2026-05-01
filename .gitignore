@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.local
+.vscode/
+.idea/
+dist/
+build/
+
+# Skill development artifacts — test results, screenshots, benchmarks
+# Each skill creates its own *-workspace folder during iteration via skill-creator
+*-workspace/

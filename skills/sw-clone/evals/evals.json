@@ -1,0 +1,26 @@
+{
+  "skill_name": "sw-clone",
+  "evals": [
+    {
+      "id": 0,
+      "name": "pricing-page-nextjs",
+      "prompt": "clone this pricing page https://posthog.com/pricing into a fresh next.js + tailwind project. focus on the hero + pricing cards section. dont need backend, just static UI. write the component file(s) and any global css needed.",
+      "expected_output": "A Next.js page component (.tsx) using Tailwind, with the hero section + pricing cards layout matching the source, including responsive breakpoints",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "linear-hero-plain",
+      "prompt": "recreate https://www.linear.app homepage hero in plain HTML+CSS, no framework. make sure it works on mobile too — the gradient bg and the floating shapes are important to match. write index.html and styles.css.",
+      "expected_output": "An index.html + styles.css implementing the Linear hero, with gradient background, floating shapes, responsive mobile breakpoint",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "github-nav-react",
+      "prompt": "i love the navigation bar on https://github.com/anthropics/skills (the top GitHub nav with the search bar, notifications, profile menu). build just that nav as a react component with tailwind, with the search input + buttons. one file, default export the component.",
+      "expected_output": "A single .tsx file exporting a React component for the GitHub-style nav, using Tailwind, with search input + button placeholders",
+      "files": []
+    }
+  ]
+}
