@@ -1,11 +1,17 @@
----
-name: sw-skill-template
-description: Replace this with a description of when this skill should trigger and what it does. Be "pushy" — list user phrases and contexts that should activate the skill, even ambiguous ones. Skills tend to undertrigger; counter that with explicit trigger language.
----
+# Skill Starter Template
 
-# Skill Template
+> **Not installable.** This file is a starter template for adding new skills to this repo, not a real skill. To use it, copy this folder to `skills/<your-skill-name>/SKILL.md`, then edit the frontmatter and body.
 
-Replace this template with the actual skill content. Sections to include:
+When you copy this to a new skill folder, restore the YAML frontmatter:
+
+```
+---
+name: your-skill-name
+description: When the skill should trigger and what it does. Be "pushy" — list user phrases and contexts that should activate the skill, even ambiguous ones. Skills tend to undertrigger; counter that with explicit trigger language.
+---
+```
+
+Then build out these sections:
 
 ## When to use
 

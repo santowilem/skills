@@ -63,26 +63,29 @@ Restart Claude Code after either method.
 ### Repo structure
 
 ```
-skills/                  ← all published skills live here
+skills/                       ← all published skills live here
 ├── sw-clone/
 │   └── SKILL.md
 └── ...
-template/                ← starter SKILL.md for new skills
-└── SKILL.md
+template/                     ← starter for new skills (not installable)
+└── _STARTER.md                  copy this into a new skills/<name>/SKILL.md
 README.md
 .gitignore
 ```
 
+> The template file is `_STARTER.md` (not `SKILL.md`) so the `npx skills` CLI doesn't list it as an installable skill.
+
 ### Adding a new skill
 
-1. Copy the template: `cp -r template skills/<your-skill-name>`
-2. Edit `skills/<your-skill-name>/SKILL.md` — fill in `name`, `description`, body
-3. Test locally before publishing:
+1. Create the skill folder: `mkdir skills/<your-skill-name>`
+2. Copy the starter: `cp template/_STARTER.md skills/<your-skill-name>/SKILL.md`
+3. Add the YAML frontmatter at the top (see `_STARTER.md` for the template) and write the body
+4. Test locally before publishing:
    ```bash
    npx skills add D:\training\skills --skill <your-skill-name> -g
    ```
-4. Iterate the SKILL.md until it triggers reliably and produces good output
-5. Commit + push to GitHub — `npx skills update` will pick up changes
+5. Iterate the SKILL.md until it triggers reliably and produces good output
+6. Commit + push to GitHub — `npx skills update` will pick up changes
 
 ### Tooling
 
