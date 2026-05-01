@@ -225,7 +225,23 @@ Auto-detect from `package.json`:
 | `vue` | Vue 3 |
 | `svelte` | SvelteKit |
 | `astro` | Astro |
-| (none) | Plain HTML/CSS — write static files |
+| (none, or no `package.json` at all) | **Plain HTML + CSS + JS** — write `index.html`, `styles.css`, and `app.js` as siblings the user can open directly in a browser. See "Default plain output" below. |
+
+#### Default plain output
+
+When there's no project context to match (the user is in an empty folder, in their home directory, or just dropped a prompt without pointing you at a codebase), default to a **three-file plain web** structure:
+
+```
+index.html
+styles.css
+app.js
+```
+
+Rationale: most real-world web pages need *some* interactivity even if it looks minimal — hamburger menu toggle, smooth-scroll behavior, an intersection observer for nav-on-scroll, a dropdown. Always scaffolding all three files (even if `app.js` starts as a couple lines) avoids the awkward "I built it pure CSS but now you want a menu toggle, here's a fourth file" moment.
+
+If the source page is genuinely zero-JS (a static brochure with no interactivity at all), you can omit `app.js` — but call it out in your output: "no JS file created since the source has no interactive behavior." Otherwise default to all three.
+
+Do not introduce a build step (no Vite, no Tailwind CDN unless you explicitly verify the user wants that, no `npm install`). The whole point of the plain default is the user can double-click `index.html` and see the result.
 
 ### Styling detection
 
