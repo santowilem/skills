@@ -1,9 +1,9 @@
 ---
-name: sw-clone
+name: clone-ui
 description: Pixel-faithful clone of any web UI into the user's existing stack, using whatever sources are available — a screenshot alone, a live URL, raw HTML/CSS, or any combination. Use this skill whenever the user wants to recreate, match, replicate, or "clone" a design from a screenshot, image, URL, Figma export, or HTML dump. Trigger on phrases like "clone this", "match this design", "build this from screenshot", "recreate this page", "make it look like this", "rebuild this UI", "copy this layout", or any time the user provides a visual reference and asks for a faithful implementation. Do not undertrigger — even if the user just drops a screenshot without explicit phrasing, this skill applies.
 ---
 
-# sw-clone
+# clone-ui
 
 Faithful, multi-source web UI cloning. Optimized for **fidelity over speed**: the goal is "looks identical to the source" first, "fits the project conventions" second.
 

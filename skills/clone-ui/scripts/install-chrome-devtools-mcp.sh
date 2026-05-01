@@ -2,7 +2,7 @@
 # install-chrome-devtools-mcp.sh
 # Adds chrome-devtools-mcp to Claude Code's settings.json without overwriting existing mcpServers entries.
 # Run from bash:
-#   ~/.claude/skills/sw-clone/scripts/install-chrome-devtools-mcp.sh
+#   ~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.sh
 
 set -euo pipefail
 

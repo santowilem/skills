@@ -1,47 +1,55 @@
 # santowilem/skills
 
-Reusable agent skills for AI coding assistants (Claude Code, Cursor, etc.). Distributed via the [skills.sh](https://skills.sh) CLI.
+Reusable agent skills for Claude Code, Cursor, and other AI coding assistants. Distributed via the [skills.sh](https://skills.sh) CLI.
 
 ## Skills
 
-| Skill | Purpose | Recommended companion |
+### [`clone-ui`](./skills/clone-ui/) — pixel-faithful web UI cloning
+
+Clone any web UI into your existing stack (React, Vue, plain HTML/CSS, Astro, Svelte, etc.) using whatever sources are available — a screenshot, a live URL, raw HTML, a Figma export, or any combination.
+
+| Source | Source page | Clone produced |
 |---|---|---|
-| [`sw-clone`](./skills/sw-clone/) | Pixel-faithful clone of any web UI from screenshots, URLs, or raw HTML — into the user's existing stack | [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) for live screenshot capture |
+| Linear hero | ![Linear source](./assets/linear-source.png) | ![Linear clone](./assets/linear-clone.png) |
+
+> Captured from the [iteration-2 benchmark](./skills/clone-ui/evals/) — the clone above was built from a single live screenshot via the chrome-devtools MCP companion. Live RGB tokens, font metrics, and gradients lifted directly from the rendered DOM.
+
+#### Why use `clone-ui` instead of a generic cloner
+
+- **Tier-based fidelity reporting.** The skill is explicit about what it can and can't do — Tier A (live screenshot + DOM tokens), B (static fetch + screenshot), C (user-provided assets), D (memory only). It refuses to fall back to memory silently and pretend the result is faithful.
+- **Multi-source support.** Drop a screenshot, paste a URL, give it raw HTML, or any mix. The skill picks the highest-fidelity input you have.
+- **Auth-gated UI handling.** Logged-in views (GitHub authenticated chrome, Gmail, dashboards) are flagged honestly as "Tier mixed: tokens A, layout D" instead of being faked from training data.
+- **Stack-agnostic.** Auto-detects your project's framework + styling system from `package.json` and matches your conventions. No "now I want this in your stack" rewrites.
+- **Companion MCP wired in.** When [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) is installed, the skill captures live screenshots + DOM at multiple viewports automatically.
 
 ## Install
 
-Global (recommended):
+Global (recommended — available across all projects):
 
 ```bash
-npx skills add santowilem/skills --skill sw-clone -g
+npx skills add santowilem/skills --skill clone-ui -g
 ```
 
 Per-project:
 
 ```bash
-npx skills add santowilem/skills --skill sw-clone
+npx skills add santowilem/skills --skill clone-ui
 ```
 
-Install all skills from this repo:
+### Optional but strongly recommended: Chrome DevTools MCP
 
-```bash
-npx skills add santowilem/skills -g
-```
-
-### Optional: Chrome DevTools MCP (recommended for `sw-clone`)
-
-`sw-clone` works without it but produces **dramatically better** results when [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) is installed — it lets the agent take real screenshots of the target page instead of working from training-data memory.
+`clone-ui` works without it but produces **dramatically better** results when [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) is installed — it lets the agent take real screenshots of the target page and read computed styles instead of working from training-data memory.
 
 **One-line install** (after installing the skill):
 
 Windows (PowerShell):
 ```powershell
-~/.claude/skills/sw-clone/scripts/install-chrome-devtools-mcp.ps1
+~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.ps1
 ```
 
 Mac/Linux:
 ```bash
-~/.claude/skills/sw-clone/scripts/install-chrome-devtools-mcp.sh
+~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.sh
 ```
 
 Or manually add to `~/.claude/settings.json`:
@@ -56,44 +64,27 @@ Or manually add to `~/.claude/settings.json`:
 }
 ```
 
-Restart Claude Code after either method.
+Restart Claude Code (or your AI assistant) after either method.
 
-## Develop
+## Quick start
 
-### Repo structure
+After installing, just ask your assistant:
 
 ```
-skills/                       ← all published skills live here
-├── sw-clone/
-│   └── SKILL.md
-└── ...
-template/                     ← starter for new skills (not installable)
-└── _STARTER.md                  copy this into a new skills/<name>/SKILL.md
-README.md
-.gitignore
+clone https://posthog.com/pricing into my next.js project
 ```
 
-> The template file is `_STARTER.md` (not `SKILL.md`) so the `npx skills` CLI doesn't list it as an installable skill.
+or paste a screenshot:
 
-### Adding a new skill
-
-1. Create the skill folder: `mkdir skills/<your-skill-name>`
-2. Copy the starter: `cp template/_STARTER.md skills/<your-skill-name>/SKILL.md`
-3. Add the YAML frontmatter at the top (see `_STARTER.md` for the template) and write the body
-4. Test locally before publishing:
-   ```bash
-   npx skills add D:\training\skills --skill <your-skill-name> -g
-   ```
-5. Iterate the SKILL.md until it triggers reliably and produces good output
-6. Commit + push to GitHub — `npx skills update` will pick up changes
-
-### Tooling
-
-For draft + iteration help, use the `skill-creator` skill from `anthropics/skills`:
-
-```bash
-npx skills add anthropics/skills --skill skill-creator -g
 ```
+match this design: [screenshot.png]
+```
+
+The skill triggers automatically and walks through inventory → gather → plan → implement → verify → polish.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on adding new skills to this repo.
 
 ## License
 

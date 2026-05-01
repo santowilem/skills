@@ -1,7 +1,7 @@
 # install-chrome-devtools-mcp.ps1
 # Adds chrome-devtools-mcp to Claude Code's settings.json without overwriting existing mcpServers entries.
 # Run from PowerShell:
-#   ~/.claude/skills/sw-clone/scripts/install-chrome-devtools-mcp.ps1
+#   ~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.ps1
 
 $ErrorActionPreference = 'Stop'
 
