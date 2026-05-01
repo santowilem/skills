@@ -8,12 +8,6 @@ Reusable agent skills for Claude Code, Cursor, and other AI coding assistants. D
 
 Clone any web UI into your existing stack (React, Vue, plain HTML/CSS, Astro, Svelte, etc.) using whatever sources are available — a screenshot, a live URL, raw HTML, a Figma export, or any combination.
 
-| Source | Source page | Clone produced |
-|---|---|---|
-| Linear hero | ![Linear source](./assets/linear-source.png) | ![Linear clone](./assets/linear-clone.png) |
-
-> Captured from the [iteration-2 benchmark](./skills/clone-ui/evals/) — the clone above was built from a single live screenshot via the chrome-devtools MCP companion. Live RGB tokens, font metrics, and gradients lifted directly from the rendered DOM.
-
 #### Why use `clone-ui` instead of a generic cloner
 
 - **Tier-based fidelity reporting.** The skill is explicit about what it can and can't do — Tier A (live screenshot + DOM tokens), B (static fetch + screenshot), C (user-provided assets), D (memory only). It refuses to fall back to memory silently and pretend the result is faithful.

@@ -14,7 +14,6 @@ skills/                       ← all published skills live here
 └── ...
 template/                     ← starter for new skills (not installable)
 └── _STARTER.md                  copy this into a new skills/<name>/SKILL.md
-assets/                       ← shared images used in README (demo screenshots, etc.)
 README.md
 CONTRIBUTING.md
 .gitignore
