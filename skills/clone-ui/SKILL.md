@@ -139,10 +139,38 @@ _source/
 ├── nav-states.json       # nav at scroll=0 vs scrolled — captures transparent→solid transitions
 ├── hover-states.json     # screenshots/computed-style of nav items + submenus on hover
 └── .captures/
-    ├── source-1440.png
-    ├── source-768.png
-    └── source-375.png
+    ├── source-1440-fullpage.png       # whole page at desktop
+    ├── source-1440-viewport.png       # initial viewport at desktop
+    ├── source-768.png                 # tablet viewport
+    ├── source-375.png                 # mobile viewport
+    └── sections/
+        ├── source-hero.png            # per-section viewport screenshots (the secret weapon)
+        ├── source-features.png
+        ├── source-testimonials.png
+        └── source-footer.png
 ```
+
+### Per-section screenshot loop (don't skip)
+
+Whole-page screenshots are great for "does the section order match" but useless for "does this card's badge sit in the right place." For every section in `section-map.json`, scroll to it and take a viewport-cropped screenshot. This pays off at Pass C (visual diff) when you compare clone-section vs source-section instead of squinting at 12000px-tall full-page strips.
+
+```js
+// In chrome-devtools MCP — per section in section-map.json
+for (const section of SECTION_MAP) {
+  const el = document.querySelector(section.sourceSelector);
+  if (!el) continue;
+  const top = el.getBoundingClientRect().top + window.scrollY - 60; // -60 to clear sticky header
+  window.scrollTo({ top, behavior: 'instant' });
+  // wait 200-400ms for any scroll-triggered animation/lazy-load to settle
+  // then chrome-devtools-mcp: take_screenshot, save as source-{section.name}.png
+}
+```
+
+Run this once for desktop (1440), once for mobile (375). The output is `_source/.captures/sections/source-{name}-{width}.png` for every section × every viewport.
+
+**Why this matters**: at Phase 5 Pass C, you're already crop-comparing per section. Without these source crops you have to rerun chrome-devtools-mcp during verification to capture them. Doing it once in Phase 0 means Pass C reads from disk → 60+ screenshot round-trips avoided.
+
+This is the same workflow Google's Antigravity browser-agent does automatically ("scroll 800px, screenshot, scroll 800px, screenshot, …") — chrome-devtools-mcp gives you the same primitive, just be explicit about using it.
 
 ### Why both `raw.html` and `rendered.html`
 
@@ -904,6 +932,12 @@ These are the rules that separate a real clone from a "looks-roughly-similar" ap
     - Substituting a correctly-injected verbatim embed (Senja, Calendly, etc.) with a fake reproduction.
     User feedback like "X drift in iter-4" means **fix X**, not "rebuild iter-5 from scratch and reintroduce features iter-4 had correctly." The honest path is: keep what was correct, fix what was wrong, document any deliberate downgrade with a "why" in NOTES.md.
 
+11. **Honor guesswork markers in `section-evidence.json`** — before rendering ANY feature, scan its evidence row for markers like `(implied)`, `(inferred)`, `(guessed)`, `(speculation)`, `(palette has Nth)`. Phase 1's own honesty about what it captured is the strongest signal you have about Phase 4 hallucination risk. **Do not render features whose only evidence row contains these markers.** Either:
+    - Go back to Phase 0 and capture more (e.g., the actual title text via re-screenshot or DOM walk), then update the evidence row, OR
+    - Omit the feature and document under "Known limitations" in NOTES.md.
+
+    Real-world example: in the resend.com clone, `section-evidence.json: reach.h4Features[7]` was literally labeled `"title": "(implied — palette has 8th)"`. Phase 4 rendered an 8th feature card titled "Trusted IP pools" anyway. Pass D adversarial caught it. The fix is enforcement at Phase 4, not catching at Phase 5: **grep the evidence file for `\((implied|inferred|guessed|speculation)`** before each section's implementation, and STOP if any match falls into the section you're about to render.
+
 ### Anti-patterns (from prior cloning failures)
 
 - ❌ "Close enough" colors — pick a color picker and copy hex
@@ -1099,6 +1133,12 @@ Be specific. "The header looks off" is not a drift; "The .site-header background
 The sub-agent's output is the source of truth for "what's actually broken." If it returns ≥5 drifts, **iter the implementation against those** (back to Pass C with the new drift list). If it returns 0–2 drifts after exhausting effort, you are converged — proceed to Pass E.
 
 **Why this works**: the sub-agent has no investment in the implementation being correct, no memory of "I struggled with this for 2 hours, let me declare it done." It will read `section-evidence.json` and notice features in the output that aren't in it. That asymmetry is the leverage.
+
+**Calibration: tell the sub-agent to use `Grep` (the tool), not `Bash` grep.** When the sub-agent claims "string X is NOT in `rendered.html`", that's a critical negative finding — it directly drives "this content was hallucinated" drifts. Bash `grep` and `grep -P` can fail silently on non-UTF8 Windows locales (`grep: -P supports only unibyte and UTF-8 locales`) and produce false-negative drift claims. Add this verbatim to your Pass D prompt:
+
+> "When you need to verify that a string is *not present* in a captured file (e.g., 'this text was invented because it's not in rendered.html'), use the **Grep tool** (which uses ripgrep, locale-agnostic). Do NOT use Bash `grep` for negative findings — it can fail silently and report 0 hits when the string actually exists. Bash `grep` is fine for positive enumeration; for the existence-check that drives a hallucination drift, the tool is required."
+
+This was a real source of false positives in prior runs: 3 of 11 Pass D drifts in the resend.com clone were false-negatives caused by `grep -P` locale errors that the sub-agent didn't notice.
 
 **When to skip Pass D**: never. Even if Pass A/B/C are clean, run Pass D once — the cost is one sub-agent call, the upside is catching the class of drifts that the implementer is structurally blind to (hallucinations, regressions). The only legitimate skip is when you genuinely can't spawn an Agent (rare).
 
