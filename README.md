@@ -6,7 +6,7 @@
 
 **One natural-language prompt.** Your AI rebuilds any website, screenshot, or Figma design in your stack — and proves the result is faithful, not invented.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![SKILL.md Standard](https://img.shields.io/badge/Standard-SKILL.md-blue.svg)](https://github.com/anthropics/skills) [![5+ AI Assistants](https://img.shields.io/badge/AI%20Assistants-5%2B-brightgreen.svg)](#-compatibility) [![Made for Claude Code](https://img.shields.io/badge/Made%20for-Claude%20Code-orange.svg)](https://claude.com/claude-code)
+[![skills.sh](https://skills.sh/b/santowilem/skills)](https://skills.sh/santowilem/skills) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![SKILL.md Standard](https://img.shields.io/badge/Standard-SKILL.md-blue.svg)](https://github.com/anthropics/skills) [![5+ AI Assistants](https://img.shields.io/badge/AI%20Assistants-5%2B-brightgreen.svg)](#-compatibility) [![Made for Claude Code](https://img.shields.io/badge/Made%20for-Claude%20Code-orange.svg)](https://claude.com/claude-code)
 
 **[Install](#-install)** · **[Quick Start](#-quick-start)** · **[Use Cases](#-use-cases)** · **[How it works](#-how-clone-ui-stays-honest)** · **[Compatibility](#-compatibility)**
 
@@ -73,8 +73,8 @@ Other "clone this UI" workflows fail in 5 predictable ways. We engineered around
 ## 🚦 Quick start
 
 ```bash
-# 1. Install the skill (one command, works globally)
-npx skills add santowilem/skills --skill clone-ui -g
+# 1. Install the skill
+npx skills add santowilem/skills --skill clone-ui
 
 # 2. Optional but recommended — install Chrome DevTools MCP for live capture
 ~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.sh   # macOS/Linux
@@ -149,14 +149,6 @@ After self-verification passes, a **fresh sub-agent** is spawned with no impleme
 ---
 
 ## 📦 Install
-
-Global (recommended — available across all projects):
-
-```bash
-npx skills add santowilem/skills --skill clone-ui -g
-```
-
-Per-project:
 
 ```bash
 npx skills add santowilem/skills --skill clone-ui
