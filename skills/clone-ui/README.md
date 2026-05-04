@@ -196,6 +196,6 @@ For discoverability — these are the terms developers search when looking for w
 
 ⭐ **[Star on GitHub](https://github.com/santowilem/skills)** — it's free and it actually matters for visibility.
 
-Built by [@santowilem](https://github.com/santowilem) · Distributed via [skills.sh](https://skills.sh/santowilem/skills/clone-ui)
+Distributed via [skills.sh](https://skills.sh/santowilem/skills/clone-ui)
 
 </div>

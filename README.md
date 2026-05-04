@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 santowilem/skills — SKILL.md Skills for Claude Code, Cursor, Codex CLI & Every AI Coding Assistant
+# 🎨 SKILL.md Skills for Claude Code, Cursor, Codex CLI & Every AI Coding Assistant
 
 ### A curated collection of open-spec [SKILL.md](https://github.com/anthropics/skills) skills — install once, work across every major AI coding tool
 
@@ -88,6 +88,6 @@ For discoverability — these are the terms developers search when looking for s
 
 ⭐ **[Star on GitHub](https://github.com/santowilem/skills)** — free, fast, and genuinely useful for visibility.
 
-Built by [@santowilem](https://github.com/santowilem) · Distributed via [skills.sh](https://skills.sh/santowilem/skills)
+Distributed via [skills.sh](https://skills.sh/santowilem/skills)
 
 </div>
