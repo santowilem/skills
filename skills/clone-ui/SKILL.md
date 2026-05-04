@@ -954,6 +954,35 @@ If any cell says "?" you have to go back to Phase 0 and capture more. Don't proc
 
 For each input the user has, pull it into context:
 
+### Saving large evaluate_script results — use the bundled helper
+
+`chrome-devtools-mcp` `evaluate_script` results frequently exceed the LLM context window, so they're persisted as tool-result files on disk. Phase 2 then needs to slice the JSON payload into typed capture artifacts (`section-styles.json`, `nav-states.json`, `pseudo-elements.json`, etc).
+
+**Do not write inline PowerShell/bash subexpressions for each save** — that triggers a permission prompt per command, and Phase 2 can produce 10–15 such saves per clone. Instead, route every save through the bundled helper script:
+
+```powershell
+# Windows
+pwsh ~/.claude/skills/clone-ui/scripts/save-tool-result.ps1 `
+    -src "<tool-result-file-path>" `
+    -out "_source/section-styles.json"
+```
+
+```bash
+# Mac/Linux (or Windows with python in PATH)
+python ~/.claude/skills/clone-ui/scripts/save-tool-result.py \
+    --src "<tool-result-file-path>" \
+    --out "_source/section-styles.json"
+```
+
+The helper:
+- Reads only the path passed via `--src` / `-src`.
+- Writes only the path passed via `--out` / `-out`.
+- Slices between the first `{` after the marker (default `` ```json ``) and the last `}`.
+- Creates the output directory if missing.
+- Prints a one-line size confirmation.
+
+A single `Allow` permission rule for the helper pattern covers every Phase 2 save — see the README's "Recommended permission rules" section for the snippet to add to `~/.claude/settings.json`.
+
 ### Screenshot
 
 `Read` the file path. The image is your visual truth — refer back to it constantly.

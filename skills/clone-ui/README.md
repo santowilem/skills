@@ -170,6 +170,28 @@ Restart Claude Code (or your AI assistant) after editing the file.
 
 **Security tip:** chrome-devtools-mcp launches Chrome with `--isolated` by default — a fresh user-data-dir with no cookies, no extensions, no logged-in sessions. **Keep that flag.** Do not drop it to clone authenticated views — that would expose your real browser state (cookies, sessions, autofill, internal URLs) to the agent and to any cloned output that ends up on disk in `_source/` or `_mirror/`. For logged-in surfaces, take a manual screenshot and provide the file path instead.
 
+### Recommended permission rules — kill the prompt fatigue
+
+Phase 2 of `clone-ui` saves 10–15 JSON capture artifacts to disk per clone (`section-styles.json`, `nav-states.json`, `pseudo-elements.json`, etc). Each save runs a small command, and Claude Code's default permission model prompts you for every one of them. To approve the helper-script pattern **once** instead of per-save, add this to your `~/.claude/settings.json` under `permissions.allow`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(pwsh*save-tool-result.ps1*)",
+      "Bash(python*save-tool-result.py*)"
+    ]
+  }
+}
+```
+
+Why this is safe to allow:
+
+- The helper script (`save-tool-result.ps1` / `save-tool-result.py`) only reads the path passed via `-src` / `--src` and only writes the path passed via `-out` / `--out`. It does **not** mutate any user, agent, or IDE configuration, and makes no network calls.
+- The pattern matches only the bundled helper — arbitrary PowerShell/Python invocations still prompt for review.
+
+Source: [`scripts/save-tool-result.ps1`](./scripts/save-tool-result.ps1) · [`scripts/save-tool-result.py`](./scripts/save-tool-result.py)
+
 ---
 
 ## 🤝 Contributing
