@@ -38,11 +38,11 @@ Other "clone this UI with AI" workflows fail in 5 predictable ways. We engineere
 
 | Common failure mode | Generic AI cloner | `clone-ui` |
 |---|---|---|
-| **Inventing content the source doesn't have** | "Looks like there's a hero with 'Welcome to ACME'" — but the source actually says "Hi from $Brand" | **Anti-hallucination contract**: every rendered feature traces to file+line in `_source/`. No evidence → no render. |
+| **Inventing content the source doesn't have** | "Looks like there's a hero with 'Welcome to ACME'" — but the source actually says "Hi from $Brand" | **Anti-hallucination contract**: every rendered feature traces to file+line in `.clone-ui/source/`. No evidence → no render. |
 | **Self-verification echo chamber** | The same agent that built the clone judges it. Always passes its own review. | **Adversarial Pass D**: spawns a fresh sub-agent with no implementation context, tasked with *finding drifts*, not validating. |
 | **Silent regressions on iteration** | "Fix X" → rewrite from scratch → drops correctly-built Y, Z | **Iteration-delta mode**: tags features `keep` vs `fix`, regression-diffs before declaring done. |
 | **Style inversions** ("section background is pink → title must be white") | Visual context-inferring | **Computed-style parity (Pass B)**: literal-equality diff `clone.h2.color === source.h2.color`. |
-| **Compounding the same mistakes across runs** | Each clone re-learns the same lessons | **Per-target `lessons.md`**: append on drift-found, read on next clone. |
+| **Compounding the same mistakes across runs** | Each clone re-learns the same lessons | **Per-target `.clone-ui/lessons.md`**: append on drift-found, read on next clone. |
 
 ---
 
@@ -122,13 +122,13 @@ Mixed tiers — e.g. "tokens A, layout D" for auth-gated dashboards — are repo
 
 ### 2. Section-evidence contract — every rendered feature must trace to source
 
-Before any code is written, Phase 3 produces `section-evidence.json`:
+Before any code is written, Phase 3 produces `.clone-ui/plan/section-evidence.json`:
 
 ```json
 {
   "header": [
-    { "feature": "transparent gradient bg", "evidence": "_source/nav-states.json: initial.backgroundImage" },
-    { "feature": "phone CTA right side",    "evidence": "_source/raw.html: line 1247" }
+    { "feature": "transparent gradient bg", "evidence": ".clone-ui/source/nav-states.json: initial.backgroundImage" },
+    { "feature": "phone CTA right side",    "evidence": ".clone-ui/source/raw.html: line 1247" }
   ]
 }
 ```
@@ -137,7 +137,7 @@ Phase 4 implementation cannot render a feature without an evidence row. Negative
 
 ### 3. Adversarial sub-agent (Pass D) — fresh eyes, no echo chamber
 
-After self-verification passes, a **fresh sub-agent** is spawned with zero implementation context. It only sees `_source/` and the final output, and its prompt is: "find at least 5 drifts." This breaks the self-audit echo chamber that makes most AI cloners pass their own reviews trivially. In real-world testing, Pass D routinely finds 5–8 hallucinations the original implementer was structurally blind to: invented brand wordmarks, fabricated copy, wrong column counts, missing pseudo-elements, fake link destinations.
+After self-verification passes, a **fresh sub-agent** is spawned with zero implementation context. It only sees `.clone-ui/source/` and the final output, and its prompt is: "find at least 5 drifts." This breaks the self-audit echo chamber that makes most AI cloners pass their own reviews trivially. In real-world testing, Pass D routinely finds 5–8 hallucinations the original implementer was structurally blind to: invented brand wordmarks, fabricated copy, wrong column counts, missing pseudo-elements, fake link destinations.
 
 ---
 
@@ -168,7 +168,7 @@ npx skills add santowilem/skills --skill clone-ui
 
 Restart Claude Code (or your AI assistant) after editing the file.
 
-**Security tip:** chrome-devtools-mcp launches Chrome with `--isolated` by default — a fresh user-data-dir with no cookies, no extensions, no logged-in sessions. **Keep that flag.** Do not drop it to clone authenticated views — that would expose your real browser state (cookies, sessions, autofill, internal URLs) to the agent and to any cloned output that ends up on disk in `_source/` or `_mirror/`. For logged-in surfaces, take a manual screenshot and provide the file path instead.
+**Security tip:** chrome-devtools-mcp launches Chrome with `--isolated` by default — a fresh user-data-dir with no cookies, no extensions, no logged-in sessions. **Keep that flag.** Do not drop it to clone authenticated views — that would expose your real browser state (cookies, sessions, autofill, internal URLs) to the agent and to any cloned output that ends up on disk in `.clone-ui/source/` or `.clone-ui/mirror/`. For logged-in surfaces, take a manual screenshot and provide the file path instead.
 
 ### Recommended permission rules — kill the prompt fatigue
 
