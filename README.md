@@ -77,8 +77,7 @@ Other "clone this UI" workflows fail in 5 predictable ways. We engineered around
 npx skills add santowilem/skills --skill clone-ui
 
 # 2. Optional but recommended — install Chrome DevTools MCP for live capture
-~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.sh   # macOS/Linux
-~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.ps1  # Windows
+#    See "Chrome DevTools MCP" section below for the JSON snippet to add to ~/.claude.json
 
 # 3. Restart your AI assistant, then just ask:
 "clone https://posthog.com/pricing into my next.js project"
@@ -158,19 +157,8 @@ npx skills add santowilem/skills --skill clone-ui
 
 `clone-ui` works without it but produces **dramatically better** results when [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) is installed — it lets the agent take real screenshots of the target page and read computed styles instead of working from training-data memory. This is what powers the per-section visual diff loop in Phase 0 and the programmatic computed-style parity check in Pass B.
 
-**One-line install** (after installing the skill):
+**Install manually** by adding the entry below to your Claude Code config at `~/.claude.json` (under `mcpServers`):
 
-Windows (PowerShell):
-```powershell
-~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.ps1
-```
-
-Mac/Linux:
-```bash
-~/.claude/skills/clone-ui/scripts/install-chrome-devtools-mcp.sh
-```
-
-Or manually add to `~/.claude/settings.json`:
 ```json
 {
   "mcpServers": {
@@ -182,7 +170,11 @@ Or manually add to `~/.claude/settings.json`:
 }
 ```
 
-Restart Claude Code (or your AI assistant) after either method.
+> **Why no install script?** This skill never writes to your MCP/settings files. Configuration changes are explicit — copy the snippet, paste it, save. See the [Security & threat model](./skills/clone-ui/SKILL.md#security--threat-model-read-this-before-phase-1) section in `SKILL.md` for the full rationale.
+
+Restart Claude Code (or your AI assistant) after editing the file.
+
+**Security tip:** chrome-devtools-mcp launches Chrome with `--isolated` by default — a fresh user-data-dir with no cookies. Keep that flag. Do not drop it to clone authenticated views — it would expose your real browser state (cookies, sessions, autofill) to the agent and to any cloned output that ends up on disk. For logged-in surfaces, take a manual screenshot and provide the file path instead.
 
 ---
 
