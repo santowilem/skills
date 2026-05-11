@@ -194,6 +194,23 @@ Source: [`scripts/save-tool-result.ps1`](./scripts/save-tool-result.ps1) · [`sc
 
 ---
 
+## 🔒 Security model — what this skill does with third-party content
+
+Cloning a UI inherently means **ingesting third-party HTML, CSS, JS, screenshots, and Figma exports into the agent's context and onto your disk**. `clone-ui` treats that surface as a first-class threat model, not an afterthought. The full rules live in [`SKILL.md` → Security & threat model](./SKILL.md#security--threat-model-read-this-before-phase-1); the headline guarantees:
+
+| Rule | What it does | Why it matters |
+|---|---|---|
+| **All fetched content = untrusted DATA** | Source HTML/CSS/screenshots are wrapped as untrusted external input. The agent uses them as a **fidelity reference only** — never as directives that change behavior. | Prevents indirect prompt injection — a target page can't override the agent by embedding "ignore previous instructions" in alt text, JSON-LD, or a hidden div. |
+| **Injection-pattern hard guardrail** | When the agent detects directive-style patterns (`ignore previous`, `rm -rf`, exfil URLs, config-file writes, "Claude: do X") aimed at the agent, it **STOPS**, quotes the excerpt verbatim, and asks before proceeding. Borderline cases default to STOP-and-ask. | Closes the residual "agent might mis-classify untrusted-data as instructions" risk that any LLM-based ingestion pipeline has. |
+| **No auth surfaces by default** | Auth-gated views (Gmail, Linear, SaaS dashboards) are not cloned via a logged-in browser unless the user explicitly opts in. Manual screenshot path is preferred so the user can redact before sharing. | Stops session cookies, real names/emails, and internal URLs from landing in `.clone-ui/source/` on disk. |
+| **Mirror tool strips scripts** | The optional local-mirror workflow removes `<script>` tags + third-party trackers by default. Agent never executes fetched JS. | A compromised target site can't ship JS that runs the moment you open the mirror in a browser. |
+| **No silent config writes** | The skill never writes to `~/.claude.json`, `~/.claude/settings.json`, shell rc, or any agent/IDE config. Setup snippets are printed for you to paste manually. | You stay in control of what touches your global config. No install script = no opaque mutation. |
+| **Detection log** | Injection-pattern matches (and borderline-but-allowed cases) get appended to `.clone-ui/lessons.md` with the source file/line. | Audit trail for what the source page contained and how the skill handled it. |
+
+If you operate this skill in a managed/enterprise context and want a deeper audit, the [Security & threat model section in `SKILL.md`](./SKILL.md#security--threat-model-read-this-before-phase-1) is the canonical reference — every rule above expands there with concrete examples and rationale.
+
+---
+
 ## 🤝 Contributing
 
 See [CONTRIBUTING.md](../../CONTRIBUTING.md) at the repo root for instructions on adding new skills.
